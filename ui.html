@@ -1,8 +1,12 @@
+<html>
+
 <head>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
 	 title="roboto">
 	<script src="nui://game/ui/jquery.js" type="text/javascript"></script>
 	<script type="text/javascript">
+		const cType = 1;
+
 		function addCommas(nStr) {
 			nStr += '';
 			let x = nStr.split('.');
@@ -10,7 +14,12 @@
 			let x2 = x.length > 1 ? '.' + x[1] : '';
 			let rgx = /(\d+)(\d{3})/;
 			while (rgx.test(x1)) {
-				x1 = x1.replace(rgx, '$1' + '<span style="margin-left: 3px; margin-right: 3px;"/>' + '$2');
+				if (!cType || cType === 1)
+					x1 = x1.replace(rgx, '$1' + '<span style="margin-left: 3px; margin-right: 3px;"/>' + '$2');
+				if (cType === 2)
+					x1 = x1.replace(rgx, '$1' + ',' + '$2');
+				else
+					x1 = x1.replace(rgx, '$1' + ',' + '$2');
 			}
 			return x1 + x2;
 		}
@@ -43,11 +52,11 @@
 
 					setTimeout(function () {
 						$(element).fadeOut(600, function () { $(this).remove(); });
-					}, 1000);
-				} else if (item.removeStartWindow == true) {
-					$("#starter").remove();
+					}, 1000)
 				} else if (item.setDisplay == true) {
 					$("#money").css('opacity', item.display);
+				} else if (item.setType) {
+					cType = item.value;
 				}
 			});
 		};
@@ -89,7 +98,9 @@
 	<div id="starter" style="font-family: 'roboto'; color: white; position: absolute; left: 20%; top: 5%; width: 60%; background: rgba(40, 40, 40, 0.8)"></div>
 	<div id="container">
 		<div id="money">
-			<div id="cash" />
+			<div id="cash"></div>
 		</div>
 	</div>
 </body>
+
+</html>

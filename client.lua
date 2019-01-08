@@ -79,3 +79,11 @@ AddEventHandler("es:setMoneyDisplay", function(val)
 		display = val
 	})
 end)
+
+RegisterNetEvent("es_ui:setSeperatorType")
+AddEventHandler("es_ui:setSeperatorType", function(val)
+	SendNUIMessage({
+		setType = true,
+		value = val
+	})
+end)
