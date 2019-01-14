@@ -1,3 +1,5 @@
+local cashType = 1
+
 RegisterNetEvent('es:setMoneyIcon')
 AddEventHandler('es:setMoneyIcon', function(i)
 	SendNUIMessage({
@@ -16,7 +18,7 @@ end)
 
 RegisterNetEvent('es:displayMoney')
 AddEventHandler('es:displayMoney', function(a)
-	enableNative[1] = true
+	cashType = 2
 
     SetMultiplayerHudCash(a, 0)
     StatSetInt(GetHashKey("MP0_WALLET_BALANCE"), a)
@@ -24,7 +26,7 @@ end)
 
 RegisterNetEvent('es:displayBank')
 AddEventHandler('es:displayBank', function(a)
-	enableNative[2] = true
+	cashType = 2
 
 	SetMultiplayerBankCash()
 	SetPlayerCashChange(0, 1)
@@ -41,6 +43,7 @@ AddEventHandler("es:addedMoney", function(m, native, current)
 			money = m
 		})
 	else
+		cashType = 2
 		SetMultiplayerHudCash(current, 0)
 		StatSetInt(GetHashKey("MP0_WALLET_BALANCE"), current)
 	end
@@ -55,6 +58,7 @@ AddEventHandler("es:removedMoney", function(m, native, current)
 			money = m
 		})
 	else
+		cashType = 2
 		SetMultiplayerHudCash(current, 0)
 		StatSetInt(GetHashKey("MP0_WALLET_BALANCE"), current)
 	end
@@ -86,4 +90,14 @@ AddEventHandler("es_ui:setSeperatorType", function(val)
 		setType = true,
 		value = val
 	})
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Wait(25)
+
+		if cashType == 2 then
+			ShowHudComponentThisFrame(3)
+		end
+	end
 end)
