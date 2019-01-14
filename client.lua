@@ -97,7 +97,7 @@ Citizen.CreateThread(function()
 		Wait(25)
 
 		if cashType == 2 then
-			ShowHudComponentThisFrame(3)
+			ShowHudComponentThisFrame(4)
 		end
 	end
 end)
