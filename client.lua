@@ -1,79 +1,103 @@
-function buyStock(stock, amount)
-    amount = tonumber(amount)
-    if(amount > 0 and amount)then
-        TriggerServerEvent("es_stockmarket:buyStock", stock, amount)
-    end
-end
+local cashType = 1
 
-function sellStock(stock, amount)
-    amount = tonumber(amount)
-    if(amount > 0 and amount)then
-        TriggerServerEvent("es_stockmarket:sellStock", stock, amount)
-    end
-end
-
-RegisterNUICallback('close', function(data, cb)
-    SetNuiFocus(false, false)
-    SendNUIMessage({
-        type = 'close'
-    })    
+RegisterNetEvent('es:setMoneyIcon')
+AddEventHandler('es:setMoneyIcon', function(i)
+	SendNUIMessage({
+		seticon = true,
+		icon = i
+	})
 end)
 
-RegisterNUICallback('buy', function(data, cb)
-    buyStock(data.stock, data.amount)
+RegisterNetEvent('es:activateMoney')
+AddEventHandler('es:activateMoney', function(e)
+	SendNUIMessage({
+		setmoney = true,
+		money = e
+	})
 end)
 
-RegisterNUICallback('sell', function(data, cb)
-    sellStock(data.stock, data.amount)
+RegisterNetEvent('es:displayMoney')
+AddEventHandler('es:displayMoney', function(a)
+	cashType = 2
+
+    SetMultiplayerHudCash(a, 0)
+    StatSetInt(GetHashKey("MP0_WALLET_BALANCE"), a)
 end)
 
-function enableMenu()
-    TriggerServerEvent("es_stockmarket:updateStocks")
+RegisterNetEvent('es:displayBank')
+AddEventHandler('es:displayBank', function(a)
+	cashType = 2
 
-    SetNuiFocus(true, true)
-    SendNUIMessage({
-        type = 'open'
-    })
-end
-
-RegisterNetEvent("es_stockmarket:updateStocks")
-AddEventHandler("es_stockmarket:updateStocks", function(stocks)
-    SendNUIMessage({
-        type = 'update',
-        stocks = json.encode(stocks)
-    })
+	SetMultiplayerBankCash()
+	SetPlayerCashChange(0, 1)
+	Citizen.InvokeNative(0x170F541E1CADD1DE, true)
+	SetPlayerCashChange(0, a)
 end)
 
-RegisterNetEvent("es_stockmarket:setClientToUpdate")
-AddEventHandler("es_stockmarket:setClientToUpdate", function()
-    TriggerServerEvent("es_stockmarket:updateStocks")
+RegisterNetEvent("es:addedMoney")
+AddEventHandler("es:addedMoney", function(m, native, current)
+
+	if not native then
+		SendNUIMessage({
+			addcash = true,
+			money = m
+		})
+	else
+		cashType = 2
+		SetMultiplayerHudCash(current, 0)
+		StatSetInt(GetHashKey("MP0_WALLET_BALANCE"), current)
+	end
+
 end)
 
-function disableMenu()
-    SetNuiFocus(false, false)
-    SendNUIMessage({
-        type = 'close'
-    })
-end
+RegisterNetEvent("es:removedMoney")
+AddEventHandler("es:removedMoney", function(m, native, current)
+	if not native then
+		SendNUIMessage({
+			removecash = true,
+			money = m
+		})
+	else
+		cashType = 2
+		SetMultiplayerHudCash(current, 0)
+		StatSetInt(GetHashKey("MP0_WALLET_BALANCE"), current)
+	end
+end)
 
---SetEntityCoords(PlayerPedId(), 1701.8, 2583.18, -69.26505)
+RegisterNetEvent('es:addedBank')
+AddEventHandler('es:addedBank', function(m)
+	Citizen.InvokeNative(0x170F541E1CADD1DE, true)
+	SetPlayerCashChange(0, math.floor(m))
+end)
 
-RegisterCommand('updatestocks', function(source, args)
-    TriggerServerEvent("es_stockmarket:updateStocks")
-end, false)
+RegisterNetEvent('es:removedBank')
+AddEventHandler('es:removedBank', function(m)
+	Citizen.InvokeNative(0x170F541E1CADD1DE, true)
+	SetPlayerCashChange(0, -math.floor(m))
+end)
 
-RegisterCommand('openstocks', function(source, args)
-    enableMenu()
-end, false)
+RegisterNetEvent("es:setMoneyDisplay")
+AddEventHandler("es:setMoneyDisplay", function(val)
+	SendNUIMessage({
+		setDisplay = true,
+		display = val
+	})
+end)
 
-RegisterCommand('closestocks', function(source, args)
-    disableMenu()
-end, false)
+RegisterNetEvent("es_ui:setSeperatorType")
+AddEventHandler("es_ui:setSeperatorType", function(val)
+	SendNUIMessage({
+		setType = true,
+		value = val
+	})
+end)
 
-RegisterCommand('bstock', function(source, args)
-    buyStock(args[1], args[2])
-end, false)
+Citizen.CreateThread(function()
+	while true do
+		Wait(25)
 
-RegisterCommand('sstock', function(source, args)
-    sellStock(args[1], args[2])
-end, false)
+		if cashType == 2 then
+			ShowHudComponentThisFrame(4)
+		end
+	end
+end)
