@@ -1,106 +1,141 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
-	 title="roboto">
-	<script src="nui://game/ui/jquery.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		const cType = 1;
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		function addCommas(nStr) {
-			nStr += '';
-			let x = nStr.split('.');
-			let x1 = x[0];
-			let x2 = x.length > 1 ? '.' + x[1] : '';
-			let rgx = /(\d+)(\d{3})/;
-			while (rgx.test(x1)) {
-				if (!cType || cType === 1)
-					x1 = x1.replace(rgx, '$1' + '<span style="margin-left: 3px; margin-right: 3px;"/>' + '$2');
-				if (cType === 2)
-					x1 = x1.replace(rgx, '$1' + ',' + '$2');
-				else
-					x1 = x1.replace(rgx, '$1' + ',' + '$2');
-			}
-			return x1 + x2;
-		}
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-		let moneyIcon = "$";
+    <style>
+        html,
+        body {
+            background: rgba(255, 255, 255, 0);
+            width: 100%;
+            height: 100%;
+        }
 
-		window.onload = function (e) {
-			// NUI Callback
-			window.addEventListener('message', function (event) {
-				let item = event.data;
+        #content {
+            position: absolute;
+            width: 80%;
+            left: 10%;
+            height: 80%;
+            top: 10vh;
+            color: white;
 
-				if (item.seticon == true) {
-					moneyIcon = item.icon;
-				} else if (item.setmoney == true) {
-					document.getElementById("cash").innerHTML = "<div><font style='color: rgb(0, 125, 0); font-weight: 700; margin-right: 6px;'>" + moneyIcon + "</font>" + addCommas(item.money);
-				} else if (item.addcash == true) {
-					$(".tiny").remove();
+            display: none;
 
-					var element = $("<div class='tiny'>+<font style='color: rgb(0, 125, 0); font-weight: 700; margin-right: 6px;'>" + moneyIcon + "</font>" + addCommas(item.money) + "</div>");
-					$("#money").append(element);
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            background: rgba(100, 100, 100, 1);
+        }
 
-					setTimeout(function () {
-						$(element).fadeOut(600, function () { $(this).remove(); });
-					}, 1000);
-				} else if (item.removecash == true) {
-					$(".tiny").remove();
+        #content .table {
+            color: white;
+        }
 
-					var element = $("<div class='tiny'>-<font style='color: rgb(250, 0, 0); font-weight: 700; margin-right: 6px;'>" + moneyIcon + "</font>" + addCommas(item.money) + "</div>");
-					$("#money").append(element);
+        .close {
+            position: absolute;
+            right: 32px;
+            top: 32px;
+            width: 32px;
+            height: 32px;
+            opacity: 0.3;
+        }
 
-					setTimeout(function () {
-						$(element).fadeOut(600, function () { $(this).remove(); });
-					}, 1000)
-				} else if (item.setDisplay == true) {
-					$("#money").css('opacity', item.display);
-				} else if (item.setType) {
-					cType = item.value;
-				}
-			});
-		};
-	</script>
+        .close:hover {
+            opacity: 1;
+        }
 
-	<style>
-		@font-face {
-			font-family: pcdown;
-			src: url(pdown.ttf);
-		}
+        .close:before,
+        .close:after {
+            position: absolute;
+            left: 15px;
+            content: ' ';
+            height: 33px;
+            width: 2px;
+            background: rgba(255, 255, 255, 1);
+        }
 
-		.tiny {
-			font-size: 29px;
-			position: absolute;
-			right: 10;
-		}
+        .close:before {
+            transform: rotate(45deg);
+        }
 
-		#money {
-			font-family: pcdown;
-			font-size: 35px;
-			color: white;
-			padding: 4px;
-			text-shadow:
-				-1px -1px 0 #000,
-				1px -1px 0 #000,
-				-1px 1px 0 #000,
-				1px 1px 0 #000;
-		}
+        .close:after {
+            transform: rotate(-45deg);
+        }
 
-		#container {
-			position: absolute;
-			top: 40;
-			right: 40;
-		}
-	</style>
+        #banner {
+            height: 20vh;
+            background-color: rgba(51, 89, 198, 1);
+        }
+
+        #banner-img {
+            height: 100%;
+            padding: 10px;
+            vertical-align:middle;
+        }
+
+        #to-center h1 {
+            font-size: 4.2vh;
+        }
+
+        #to-center p {
+            font-style: italic;
+            font-size: 2vh;
+        }
+
+        .box {
+            display: flex;
+   align-items:center;
+        }
+    </style>
+
+    <title>es_stockmarket</title>
 </head>
 
 <body>
-	<div id="starter" style="font-family: 'roboto'; color: white; position: absolute; left: 20%; top: 5%; width: 60%; background: rgba(40, 40, 40, 0.8)"></div>
-	<div id="container">
-		<div id="money">
-			<div id="cash"></div>
-		</div>
-	</div>
+    <div id="content">        
+        <div id="banner">
+            <div class="box" style="height: 100%;">
+                <img id="banner-img" class="rounded float-left" src="lcn.jpg">
+                <span style="margin-left: 5vw; font-style: italic; font-size: 4vh; text-align: center;"><b>Liberty City National</b><br><span style="font-size: 3vh">Exchange Index</span></span>
+            </div>
+
+            <a id="close" href="#" class="close"></a>
+        </div>
+
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th width="10" scope="col">#</th>
+                    <th width="50" scope="col">Abbreviation</th>
+                    <th scope="col">Full name</th>
+                    <th scope="col">Owned</th>
+                    <th scope="col">Worth</th>
+                    <th scope="col">Functions</th>
+                </tr>
+            </thead>
+            <tbody id="stockmarket">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+    </script>
+
+    <script src="ui.js"></script>
 </body>
 
 </html>
