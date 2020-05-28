@@ -94,7 +94,7 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
-		Wait(25)
+		Citizen.Wait(25)
 
 		if cashType == 2 then
 			ShowHudComponentThisFrame(4)
